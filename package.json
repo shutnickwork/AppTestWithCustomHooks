@@ -33,8 +33,8 @@
     "clean-project-all": "watchman watch-del-all; rm -rf $TMPDIR/react-native-packager-cache-*; rm -rf $TMPDIR/metro-bundler-cache-*; rm -rf node_modules/; yarn cache clean; yarn install; yarn metro:reset"
   },
   "dependencies": {
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react": "17.0.1",
+    "react-native": "0.64.2",
     "use-http": "^1.0.21"
   },
   "devDependencies": {

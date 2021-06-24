@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
   },
   engine: {
     position: 'absolute',
-    right: 0,
+    top:0,
+    left: 0,
   },
   body: {
     backgroundColor: Colors.white,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     color: Colors.dark,
-    fontSize: 12,
+    fontSize: 22,
     fontWeight: '600',
     padding: 4,
     paddingRight: 12,
@@ -94,37 +95,31 @@ const styles = StyleSheet.create({
   } as ImageStyle,
 });
 
-const url = `http://api.blog.testing.singree.com/?page=1&limit=10`;
+const isHermes = () => !!global.HermesInternal;
 
 const App = () => {
 
-  if (typeof(HermesInternal) === "undefined") {
-    console.log("Hermes is not enabled");
-  } else {
-    console.log("Hermes is enabled");
-  }
-
+  const url = `http://api.blog.testing.singree.com/?page=1&limit=10`;
   const options = {} // these options accept all native `fetch` options
   // the last argument below [] means it will fire onMount (GET by default)
   const { loading, error, data = [] } = useFetch(url, options, []);
 
-
   return (
     <>
-      {error && <Text>{error.message || 'Error'}</Text>}
-      {loading && <Text>Loading</Text>}
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
+          {isHermes() ? (
+              <View style={styles.engine}>
+                <Text style={styles.footer}>Engine: Hermes</Text>
+              </View>
+          ): null }
           <View style={styles.body}>
+            {error && <Text>{error.message || 'Error'}</Text>}
+            {loading && <Text>Loading</Text>}
             {data?.articles?.map((item: IArticle) => (
                 <TouchableOpacity
                     key={item._id}
