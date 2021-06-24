@@ -12,6 +12,7 @@ import {
   ImageStyle,
   Image
 } from 'react-native';
+import useFetch from 'use-http'
 
 import {
   Header,
@@ -93,36 +94,25 @@ const styles = StyleSheet.create({
   } as ImageStyle,
 });
 
-//const url = `http://api.blog.testing.singree.com/?page=${page}&limit=${pageSize}`;
 const url = `http://api.blog.testing.singree.com/?page=1&limit=10`;
 
 const App = () => {
 
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
-  const [error, setError] = useState(null);
+  if (typeof(HermesInternal) === "undefined") {
+    console.log("Hermes is not enabled");
+  } else {
+    console.log("Hermes is enabled");
+  }
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(url)
-        .then((result) => result.json())
-        .then((result) => {
-          setResults(result.articles);
-          setError(null);
-        })
-        .catch((e) => {
-          setError(e);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-  }, []);
+  const options = {} // these options accept all native `fetch` options
+  // the last argument below [] means it will fire onMount (GET by default)
+  const { loading, error, data = [] } = useFetch(url, options, []);
 
-  if (loading) return <Text>Loading</Text>;
-  if (error) return <Text>{error.message || 'Error'}</Text>;
 
   return (
     <>
+      {error && <Text>{error.message || 'Error'}</Text>}
+      {loading && <Text>Loading</Text>}
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <ScrollView
@@ -135,7 +125,7 @@ const App = () => {
             </View>
           )}
           <View style={styles.body}>
-            {results.map((item: IArticle) => (
+            {data?.articles?.map((item: IArticle) => (
                 <TouchableOpacity
                     key={item._id}
                     style={styles.itemContainer}
